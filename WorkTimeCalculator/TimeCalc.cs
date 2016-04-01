@@ -79,36 +79,21 @@ namespace WindowsFormsWorkTimeApplication
     private TimeSpan CorrectionTime;
     private Boolean running;
     public TimeCalcSettings settings;
+    private string logFileName;
 
     public TimeCalc()
     {
       init();
     }
 
-    ~TimeCalc()
+
+    public void log()
     {
-      log();
-    }
-
-    private void log()
-    {
-      string filename;
-
-      if (settings.logFileAddMonthYear)
-      {
-        filename = settings.logFileName.Substring(0, settings.logFileName.LastIndexOf('.'));
-        filename += "_" + startTime.Year.ToString() + "_" + startTime.ToString("MMMM", System.Globalization.CultureInfo.InvariantCulture);
-        filename += settings.logFileName.Substring(settings.logFileName.LastIndexOf('.'));
-      }
-      else
-      {
-        filename = settings.logFileName;
-      }
-
-      using (System.IO.StreamWriter sw = new System.IO.StreamWriter(filename, true))
+      using (System.IO.StreamWriter sw = new System.IO.StreamWriter(logFileName, true))
       {
         // Add some text to the file.
         sw.WriteLine(getLogString());
+        sw.Close();
       }
     }
 
@@ -126,6 +111,17 @@ namespace WindowsFormsWorkTimeApplication
       {
         settings = new TimeCalcSettings();
         TimeCalcSettings.Save(fileName, settings);
+      }
+
+      if (settings.logFileAddMonthYear)
+      {
+        logFileName = settings.logFileName.Substring(0, settings.logFileName.LastIndexOf('.'));
+        logFileName += "_" + startTime.Year.ToString() + "_" + startTime.ToString("MMMM", System.Globalization.CultureInfo.InvariantCulture);
+        logFileName += settings.logFileName.Substring(settings.logFileName.LastIndexOf('.'));
+      }
+      else
+      {
+        logFileName = settings.logFileName;
       }
 
 
@@ -234,7 +230,7 @@ namespace WindowsFormsWorkTimeApplication
     }
 
 
-    private void update()
+    public void update()
     {
       if (startTime.Date != DateTime.Now.Date)
       {
@@ -265,7 +261,6 @@ namespace WindowsFormsWorkTimeApplication
 
     public string getWorkTime()
     {
-      update();
       string str = DiffTime.ToString();
       str = str.Substring(0, str.LastIndexOf(':'));
       return str;

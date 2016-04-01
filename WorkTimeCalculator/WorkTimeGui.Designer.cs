@@ -38,6 +38,7 @@
       this.label5 = new System.Windows.Forms.Label();
       this.label6 = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();
+      this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
       this.SuspendLayout();
       // 
       // label1
@@ -61,7 +62,6 @@
       // 
       // GuiUpdateTimer
       // 
-      this.GuiUpdateTimer.Enabled = true;
       this.GuiUpdateTimer.Interval = 20000;
       this.GuiUpdateTimer.Tick += new System.EventHandler(this.GuiUpdateTimer_Tick);
       // 
@@ -112,6 +112,14 @@
       this.label7.TabIndex = 6;
       this.label7.Text = "Start time: ";
       // 
+      // notifyIcon1
+      // 
+      this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Error;
+      this.notifyIcon1.Text = "notifyIcon1";
+      this.notifyIcon1.Visible = true;
+      this.notifyIcon1.DoubleClick += new System.EventHandler(this.notifyIcon1_DoubleClick);
+      this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
+      // 
       // WorkTimeGui
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -125,11 +133,15 @@
       this.Controls.Add(this.label3);
       this.Controls.Add(this.label2);
       this.Controls.Add(this.label1);
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+      this.DoubleBuffered = true;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MaximizeBox = false;
       this.Name = "WorkTimeGui";
+      this.ShowInTaskbar = false;
       this.Text = "W.T.O.";
+      this.Deactivate += new System.EventHandler(this.WorkTimeGui_Deactivate);
+      this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.WorkTimeGui_FormClosing);
       this.DoubleClick += new System.EventHandler(this.WorkTimeGui_Click);
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -146,6 +158,7 @@
     private System.Windows.Forms.Label label5;
     private System.Windows.Forms.Label label6;
     private System.Windows.Forms.Label label7;
+    private System.Windows.Forms.NotifyIcon notifyIcon1;
   }
 }
 
