@@ -81,6 +81,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="1458386532_ChirstmaxShop_worktime.ico" />
+    <Content Include="Worktime_Black.ico" />
+    <Content Include="Worktime_Green.ico" />
+    <Content Include="Worktime_Red.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

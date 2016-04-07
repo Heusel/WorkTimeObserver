@@ -35,9 +35,9 @@ namespace WindowsFormsWorkTimeApplication
     {
       if (showNotification != notify)
       {
-        notifyIcon1.BalloonTipText = str;
-        notifyIcon1.Visible = true;
-        notifyIcon1.ShowBalloonTip(30000);
+        notifyIcon.BalloonTipText = str;
+        notifyIcon.Visible = true;
+        notifyIcon.ShowBalloonTip(30000);
 
         showNotification = notify;
         notifyIcon1_DoubleClick(null,null);
@@ -47,35 +47,37 @@ namespace WindowsFormsWorkTimeApplication
     private void GuiUpdateTimer_Tick(object sender, EventArgs e)
     {
       WorkTime.update();
-      label2.Text = WorkTime.getWorkTime();
+      labelWorkingTime.Text = WorkTime.getWorkTime();
 
       if (WorkTime.isDailyWorkTotalLimit())
       {
-        label2.ForeColor = Color.Red;
-        notifyIcon1.BalloonTipIcon = ToolTipIcon.Error;
-        ShowNotificationMsg( ShowNotification.Alarmtime, "ALARM: " + WorkTime.getWorkTime());
+        labelWorkingTime.ForeColor = Color.Red;
+        notifyIcon.BalloonTipIcon = ToolTipIcon.Error;
+        notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Red;
+        ShowNotificationMsg( ShowNotification.Alarmtime, "ALARM: Working Time of " + WorkTime.getWorkTime() + " is too high!!");
       }
       else if (WorkTime.isDailyWorkDone())
       {
-        label2.ForeColor = Color.Green;
-        notifyIcon1.BalloonTipIcon = ToolTipIcon.Warning;
-        ShowNotificationMsg(ShowNotification.worktime, "Work Time: " + WorkTime.getWorkTime());
+        labelWorkingTime.ForeColor = Color.Green;
+        notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
+        notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Green;
+        ShowNotificationMsg(ShowNotification.worktime, "Working Time: " + WorkTime.getWorkTime());
       }
       else
       {
-        label2.ForeColor = SystemColors.ControlText;
+        labelWorkingTime.ForeColor = SystemColors.ControlText;
       }
 
      
-      notifyIcon1.BalloonTipText = "worktim: " + WorkTime.getWorkTime();
-      notifyIcon1.Text = "worktime: " + WorkTime.getWorkTime();
+      notifyIcon.BalloonTipText = "Working Time: " + WorkTime.getWorkTime();
+      notifyIcon.Text = "Working Time: " + WorkTime.getWorkTime();
 
-      label3.Text = "Date: " + WorkTime.getStartDate();
-      label7.Text = "Start time: " + WorkTime.getStartTime.ToShortTimeString();
-      label4.Text = "Correction: " + WorkTime.getCorrectionTime();
+      labelDate.Text       = WorkTime.getStartDate();
+      labelStartTime.Text  = WorkTime.getStartTime.ToShortTimeString();
+      labelCorrection.Text = WorkTime.getCorrectionTime();
 
-      label5.Enabled = WorkTime.isCoffeeBreak();
-      label6.Enabled = WorkTime.isLunchBreak();
+      labelCoffeeBreak.Enabled = WorkTime.isCoffeeBreak();
+      labelLunchBreak.Enabled = WorkTime.isLunchBreak();
     }
 
     private void WorkTimeGui_Click(object sender, EventArgs e)
@@ -90,27 +92,16 @@ namespace WindowsFormsWorkTimeApplication
 
     private void SetBalloonTip()
     {
-      notifyIcon1.Icon = this.Icon;
-      notifyIcon1.BalloonTipTitle = "W.T.O.";
-      notifyIcon1.BalloonTipText = "worktime: " + WorkTime.getWorkTime();
-      notifyIcon1.BalloonTipIcon = ToolTipIcon.Info;
-      this.Click += new EventHandler(Form1_Click);
+      notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Black;
+      notifyIcon.BalloonTipTitle = "W.T.O.";
+      notifyIcon.BalloonTipText = "worktime: " + WorkTime.getWorkTime();
+      notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
     }
-
-    void Form1_Click(object sender, EventArgs e)
-    {
     
-    }
-
-    private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
-    {
-    }
-
     private void notifyIcon1_DoubleClick(object sender, EventArgs e)
     {
       this.Show();
-      this.WindowState = FormWindowState.Normal;
-      
+      this.WindowState = FormWindowState.Normal; 
     }
 
     private void WorkTimeGui_Deactivate(object sender, EventArgs e)
@@ -123,6 +114,22 @@ namespace WindowsFormsWorkTimeApplication
     {
       GuiUpdateTimer.Enabled = false;
       WorkTime.log();
+    }
+
+    private void toolStripMenuItem_Exit_Click(object sender, EventArgs e)
+    {
+      Application.Exit();      
+    }
+
+    private void toolStripMenuItem_Open_Click(object sender, EventArgs e)
+    {
+      this.Show();
+      this.WindowState = FormWindowState.Normal;
+    }
+
+    private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
+    {
+      notifyIcon.ContextMenuStrip.Show();
     }
   }
 }

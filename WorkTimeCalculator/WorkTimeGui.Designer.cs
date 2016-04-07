@@ -31,14 +31,21 @@
       this.components = new System.ComponentModel.Container();
       System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WorkTimeGui));
       this.label1 = new System.Windows.Forms.Label();
-      this.label2 = new System.Windows.Forms.Label();
+      this.labelWorkingTime = new System.Windows.Forms.Label();
       this.GuiUpdateTimer = new System.Windows.Forms.Timer(this.components);
       this.label3 = new System.Windows.Forms.Label();
       this.label4 = new System.Windows.Forms.Label();
-      this.label5 = new System.Windows.Forms.Label();
-      this.label6 = new System.Windows.Forms.Label();
+      this.labelCoffeeBreak = new System.Windows.Forms.Label();
+      this.labelLunchBreak = new System.Windows.Forms.Label();
       this.label7 = new System.Windows.Forms.Label();
-      this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
+      this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+      this.contextMenuStrip_Notification = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this.toolStripMenuItem_Open = new System.Windows.Forms.ToolStripMenuItem();
+      this.toolStripMenuItem_Exit = new System.Windows.Forms.ToolStripMenuItem();
+      this.labelDate = new System.Windows.Forms.Label();
+      this.labelStartTime = new System.Windows.Forms.Label();
+      this.labelCorrection = new System.Windows.Forms.Label();
+      this.contextMenuStrip_Notification.SuspendLayout();
       this.SuspendLayout();
       // 
       // label1
@@ -50,15 +57,15 @@
       this.label1.TabIndex = 0;
       this.label1.Text = "Working Time";
       // 
-      // label2
+      // labelWorkingTime
       // 
-      this.label2.AutoSize = true;
-      this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
-      this.label2.Location = new System.Drawing.Point(28, 25);
-      this.label2.Name = "label2";
-      this.label2.Size = new System.Drawing.Size(71, 29);
-      this.label2.TabIndex = 1;
-      this.label2.Text = "00:00";
+      this.labelWorkingTime.AutoSize = true;
+      this.labelWorkingTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
+      this.labelWorkingTime.Location = new System.Drawing.Point(28, 25);
+      this.labelWorkingTime.Name = "labelWorkingTime";
+      this.labelWorkingTime.Size = new System.Drawing.Size(71, 29);
+      this.labelWorkingTime.TabIndex = 1;
+      this.labelWorkingTime.Text = "00:00";
       // 
       // GuiUpdateTimer
       // 
@@ -68,7 +75,7 @@
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(10, 79);
+      this.label3.Location = new System.Drawing.Point(4, 79);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(36, 13);
       this.label3.TabIndex = 2;
@@ -77,48 +84,99 @@
       // label4
       // 
       this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(10, 115);
+      this.label4.Location = new System.Drawing.Point(4, 115);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(61, 13);
       this.label4.TabIndex = 3;
       this.label4.Text = "Correction: ";
       // 
-      // label5
+      // labelCoffeeBreak
       // 
-      this.label5.AutoSize = true;
-      this.label5.Enabled = false;
-      this.label5.Location = new System.Drawing.Point(32, 133);
-      this.label5.Name = "label5";
-      this.label5.Size = new System.Drawing.Size(68, 13);
-      this.label5.TabIndex = 4;
-      this.label5.Text = "Coffee break";
+      this.labelCoffeeBreak.AutoSize = true;
+      this.labelCoffeeBreak.Enabled = false;
+      this.labelCoffeeBreak.Location = new System.Drawing.Point(30, 134);
+      this.labelCoffeeBreak.Name = "labelCoffeeBreak";
+      this.labelCoffeeBreak.Size = new System.Drawing.Size(69, 13);
+      this.labelCoffeeBreak.TabIndex = 4;
+      this.labelCoffeeBreak.Text = "Coffee Break";
       // 
-      // label6
+      // labelLunchBreak
       // 
-      this.label6.AutoSize = true;
-      this.label6.Enabled = false;
-      this.label6.Location = new System.Drawing.Point(32, 151);
-      this.label6.Name = "label6";
-      this.label6.Size = new System.Drawing.Size(67, 13);
-      this.label6.TabIndex = 5;
-      this.label6.Text = "Lunch break";
+      this.labelLunchBreak.AutoSize = true;
+      this.labelLunchBreak.Enabled = false;
+      this.labelLunchBreak.Location = new System.Drawing.Point(31, 151);
+      this.labelLunchBreak.Name = "labelLunchBreak";
+      this.labelLunchBreak.Size = new System.Drawing.Size(68, 13);
+      this.labelLunchBreak.TabIndex = 5;
+      this.labelLunchBreak.Text = "Lunch Break";
       // 
       // label7
       // 
       this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(10, 97);
+      this.label7.Location = new System.Drawing.Point(4, 97);
       this.label7.Name = "label7";
-      this.label7.Size = new System.Drawing.Size(57, 13);
+      this.label7.Size = new System.Drawing.Size(61, 13);
       this.label7.TabIndex = 6;
-      this.label7.Text = "Start time: ";
+      this.label7.Text = "Start Time: ";
       // 
-      // notifyIcon1
+      // notifyIcon
       // 
-      this.notifyIcon1.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Error;
-      this.notifyIcon1.Text = "notifyIcon1";
-      this.notifyIcon1.Visible = true;
-      this.notifyIcon1.DoubleClick += new System.EventHandler(this.notifyIcon1_DoubleClick);
-      this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
+      this.notifyIcon.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Error;
+      this.notifyIcon.ContextMenuStrip = this.contextMenuStrip_Notification;
+      this.notifyIcon.Text = "notifyIcon1";
+      this.notifyIcon.Visible = true;
+      this.notifyIcon.DoubleClick += new System.EventHandler(this.notifyIcon1_DoubleClick);
+      this.notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
+      // 
+      // contextMenuStrip_Notification
+      // 
+      this.contextMenuStrip_Notification.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripMenuItem_Open,
+            this.toolStripMenuItem_Exit});
+      this.contextMenuStrip_Notification.Name = "contextMenuStrip_Notification";
+      this.contextMenuStrip_Notification.Size = new System.Drawing.Size(104, 48);
+      this.contextMenuStrip_Notification.Text = "W.T.O.";
+      // 
+      // toolStripMenuItem_Open
+      // 
+      this.toolStripMenuItem_Open.Name = "toolStripMenuItem_Open";
+      this.toolStripMenuItem_Open.Size = new System.Drawing.Size(103, 22);
+      this.toolStripMenuItem_Open.Text = "Open";
+      this.toolStripMenuItem_Open.Click += new System.EventHandler(this.toolStripMenuItem_Open_Click);
+      // 
+      // toolStripMenuItem_Exit
+      // 
+      this.toolStripMenuItem_Exit.Name = "toolStripMenuItem_Exit";
+      this.toolStripMenuItem_Exit.Size = new System.Drawing.Size(103, 22);
+      this.toolStripMenuItem_Exit.Text = "Exit";
+      this.toolStripMenuItem_Exit.Click += new System.EventHandler(this.toolStripMenuItem_Exit_Click);
+      // 
+      // labelDate
+      // 
+      this.labelDate.AutoSize = true;
+      this.labelDate.Location = new System.Drawing.Point(38, 79);
+      this.labelDate.Name = "labelDate";
+      this.labelDate.Size = new System.Drawing.Size(61, 13);
+      this.labelDate.TabIndex = 7;
+      this.labelDate.Text = "06.04.2016";
+      // 
+      // labelStartTime
+      // 
+      this.labelStartTime.AutoSize = true;
+      this.labelStartTime.Location = new System.Drawing.Point(65, 97);
+      this.labelStartTime.Name = "labelStartTime";
+      this.labelStartTime.Size = new System.Drawing.Size(34, 13);
+      this.labelStartTime.TabIndex = 8;
+      this.labelStartTime.Text = "00:00";
+      // 
+      // labelCorrection
+      // 
+      this.labelCorrection.AutoSize = true;
+      this.labelCorrection.Location = new System.Drawing.Point(65, 115);
+      this.labelCorrection.Name = "labelCorrection";
+      this.labelCorrection.Size = new System.Drawing.Size(34, 13);
+      this.labelCorrection.TabIndex = 9;
+      this.labelCorrection.Text = "00:00";
       // 
       // WorkTimeGui
       // 
@@ -126,15 +184,18 @@
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(126, 173);
       this.ControlBox = false;
+      this.Controls.Add(this.labelCorrection);
+      this.Controls.Add(this.labelStartTime);
+      this.Controls.Add(this.labelDate);
       this.Controls.Add(this.label7);
-      this.Controls.Add(this.label6);
-      this.Controls.Add(this.label5);
+      this.Controls.Add(this.labelLunchBreak);
+      this.Controls.Add(this.labelCoffeeBreak);
       this.Controls.Add(this.label4);
       this.Controls.Add(this.label3);
-      this.Controls.Add(this.label2);
+      this.Controls.Add(this.labelWorkingTime);
       this.Controls.Add(this.label1);
       this.DoubleBuffered = true;
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MaximizeBox = false;
       this.Name = "WorkTimeGui";
@@ -143,6 +204,7 @@
       this.Deactivate += new System.EventHandler(this.WorkTimeGui_Deactivate);
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.WorkTimeGui_FormClosing);
       this.DoubleClick += new System.EventHandler(this.WorkTimeGui_Click);
+      this.contextMenuStrip_Notification.ResumeLayout(false);
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -151,14 +213,20 @@
     #endregion
 
     private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Label label2;
+    private System.Windows.Forms.Label labelWorkingTime;
     private System.Windows.Forms.Timer GuiUpdateTimer;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.Label label6;
+    private System.Windows.Forms.Label labelCoffeeBreak;
+    private System.Windows.Forms.Label labelLunchBreak;
     private System.Windows.Forms.Label label7;
-    private System.Windows.Forms.NotifyIcon notifyIcon1;
+    private System.Windows.Forms.NotifyIcon notifyIcon;
+    private System.Windows.Forms.ContextMenuStrip contextMenuStrip_Notification;
+    private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_Open;
+    private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_Exit;
+    private System.Windows.Forms.Label labelDate;
+    private System.Windows.Forms.Label labelStartTime;
+    private System.Windows.Forms.Label labelCorrection;
   }
 }
 

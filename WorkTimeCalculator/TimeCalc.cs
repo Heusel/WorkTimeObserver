@@ -1,4 +1,7 @@
-﻿//#define DEBUGIT
+﻿
+#if DEBUG
+  #define DEBUGIT
+#endif
 
 using System;
 using System.Collections.Generic;
