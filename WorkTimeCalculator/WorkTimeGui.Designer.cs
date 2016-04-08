@@ -51,7 +51,7 @@
       // label1
       // 
       this.label1.AutoSize = true;
-      this.label1.Location = new System.Drawing.Point(4, 6);
+      this.label1.Location = new System.Drawing.Point(23, 8);
       this.label1.Name = "label1";
       this.label1.Size = new System.Drawing.Size(73, 13);
       this.label1.TabIndex = 0;
@@ -61,7 +61,7 @@
       // 
       this.labelWorkingTime.AutoSize = true;
       this.labelWorkingTime.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
-      this.labelWorkingTime.Location = new System.Drawing.Point(28, 25);
+      this.labelWorkingTime.Location = new System.Drawing.Point(35, 33);
       this.labelWorkingTime.Name = "labelWorkingTime";
       this.labelWorkingTime.Size = new System.Drawing.Size(71, 29);
       this.labelWorkingTime.TabIndex = 1;
@@ -75,7 +75,7 @@
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(4, 79);
+      this.label3.Location = new System.Drawing.Point(23, 81);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(36, 13);
       this.label3.TabIndex = 2;
@@ -84,7 +84,7 @@
       // label4
       // 
       this.label4.AutoSize = true;
-      this.label4.Location = new System.Drawing.Point(4, 115);
+      this.label4.Location = new System.Drawing.Point(23, 117);
       this.label4.Name = "label4";
       this.label4.Size = new System.Drawing.Size(61, 13);
       this.label4.TabIndex = 3;
@@ -94,7 +94,7 @@
       // 
       this.labelCoffeeBreak.AutoSize = true;
       this.labelCoffeeBreak.Enabled = false;
-      this.labelCoffeeBreak.Location = new System.Drawing.Point(30, 134);
+      this.labelCoffeeBreak.Location = new System.Drawing.Point(49, 136);
       this.labelCoffeeBreak.Name = "labelCoffeeBreak";
       this.labelCoffeeBreak.Size = new System.Drawing.Size(69, 13);
       this.labelCoffeeBreak.TabIndex = 4;
@@ -104,7 +104,7 @@
       // 
       this.labelLunchBreak.AutoSize = true;
       this.labelLunchBreak.Enabled = false;
-      this.labelLunchBreak.Location = new System.Drawing.Point(31, 151);
+      this.labelLunchBreak.Location = new System.Drawing.Point(50, 153);
       this.labelLunchBreak.Name = "labelLunchBreak";
       this.labelLunchBreak.Size = new System.Drawing.Size(68, 13);
       this.labelLunchBreak.TabIndex = 5;
@@ -113,7 +113,7 @@
       // label7
       // 
       this.label7.AutoSize = true;
-      this.label7.Location = new System.Drawing.Point(4, 97);
+      this.label7.Location = new System.Drawing.Point(23, 99);
       this.label7.Name = "label7";
       this.label7.Size = new System.Drawing.Size(61, 13);
       this.label7.TabIndex = 6;
@@ -126,7 +126,6 @@
       this.notifyIcon.Text = "notifyIcon1";
       this.notifyIcon.Visible = true;
       this.notifyIcon.DoubleClick += new System.EventHandler(this.notifyIcon1_DoubleClick);
-      this.notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseClick);
       // 
       // contextMenuStrip_Notification
       // 
@@ -154,7 +153,7 @@
       // labelDate
       // 
       this.labelDate.AutoSize = true;
-      this.labelDate.Location = new System.Drawing.Point(38, 79);
+      this.labelDate.Location = new System.Drawing.Point(57, 81);
       this.labelDate.Name = "labelDate";
       this.labelDate.Size = new System.Drawing.Size(61, 13);
       this.labelDate.TabIndex = 7;
@@ -163,7 +162,7 @@
       // labelStartTime
       // 
       this.labelStartTime.AutoSize = true;
-      this.labelStartTime.Location = new System.Drawing.Point(65, 97);
+      this.labelStartTime.Location = new System.Drawing.Point(84, 99);
       this.labelStartTime.Name = "labelStartTime";
       this.labelStartTime.Size = new System.Drawing.Size(34, 13);
       this.labelStartTime.TabIndex = 8;
@@ -172,7 +171,7 @@
       // labelCorrection
       // 
       this.labelCorrection.AutoSize = true;
-      this.labelCorrection.Location = new System.Drawing.Point(65, 115);
+      this.labelCorrection.Location = new System.Drawing.Point(84, 117);
       this.labelCorrection.Name = "labelCorrection";
       this.labelCorrection.Size = new System.Drawing.Size(34, 13);
       this.labelCorrection.TabIndex = 9;
@@ -182,7 +181,7 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(126, 173);
+      this.ClientSize = new System.Drawing.Size(117, 179);
       this.ControlBox = false;
       this.Controls.Add(this.labelCorrection);
       this.Controls.Add(this.labelStartTime);
@@ -195,7 +194,7 @@
       this.Controls.Add(this.labelWorkingTime);
       this.Controls.Add(this.label1);
       this.DoubleBuffered = true;
-      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+      this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.MaximizeBox = false;
       this.Name = "WorkTimeGui";

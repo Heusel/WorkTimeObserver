@@ -25,9 +25,9 @@ namespace WindowsFormsWorkTimeApplication
       InitializeComponent();
       SetBalloonTip();
       bSmall = false;
-      WorkTimeGui_Deactivate(null, null);
       wasShownNotification = false;
       GuiUpdateTimer_Tick(null, null);
+      WorkTimeGui_Deactivate(null, null);
       GuiUpdateTimer.Enabled = true;
     }
 
@@ -85,9 +85,9 @@ namespace WindowsFormsWorkTimeApplication
       bSmall = !bSmall;
 
       if (bSmall)
-        this.Height = 100;
+        this.Height = 120;
       else
-        this.Height = 210;
+        this.Height = 218;
     }
 
     private void SetBalloonTip()
@@ -127,9 +127,5 @@ namespace WindowsFormsWorkTimeApplication
       this.WindowState = FormWindowState.Normal;
     }
 
-    private void notifyIcon1_MouseClick(object sender, MouseEventArgs e)
-    {
-      notifyIcon.ContextMenuStrip.Show();
-    }
   }
 }
