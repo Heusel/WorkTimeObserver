@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace WindowsFormsWorkTimeApplication
@@ -14,7 +15,7 @@ namespace WindowsFormsWorkTimeApplication
     Boolean bSmall;
     enum ShowNotification {not,worktime, Alarmtime} ;
     ShowNotification showNotification;
-    Boolean wasShownNotification;
+
     
     
     public WorkTimeGui()
@@ -23,9 +24,9 @@ namespace WindowsFormsWorkTimeApplication
       WorkTime = new TimeCalc();
         
       InitializeComponent();
+      SetGuiPos();
       SetBalloonTip();
       bSmall = false;
-      wasShownNotification = false;
       GuiUpdateTimer_Tick(null, null);
       WorkTimeGui_Deactivate(null, null);
       GuiUpdateTimer.Enabled = true;
@@ -40,7 +41,7 @@ namespace WindowsFormsWorkTimeApplication
         notifyIcon.ShowBalloonTip(30000);
 
         showNotification = notify;
-        notifyIcon1_DoubleClick(null,null);
+        //notifyIcon1_DoubleClick(null,null);
       }    
     }
 
@@ -54,14 +55,14 @@ namespace WindowsFormsWorkTimeApplication
         labelWorkingTime.ForeColor = Color.Red;
         notifyIcon.BalloonTipIcon = ToolTipIcon.Error;
         notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Red;
-        ShowNotificationMsg( ShowNotification.Alarmtime, "ALARM: Working Time of " + WorkTime.getWorkTime() + " is too high!!");
+        ShowNotificationMsg( ShowNotification.Alarmtime, "Working Time of " + WorkTime.getWorkTime() + " is too high!!");
       }
       else if (WorkTime.isDailyWorkDone())
       {
         labelWorkingTime.ForeColor = Color.Green;
         notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
         notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Green;
-        ShowNotificationMsg(ShowNotification.worktime, "Working Time: " + WorkTime.getWorkTime());
+        ShowNotificationMsg(ShowNotification.worktime, "Work of the day is done: " + WorkTime.getWorkTime());
       }
       else
       {
@@ -80,6 +81,23 @@ namespace WindowsFormsWorkTimeApplication
       labelLunchBreak.Enabled = WorkTime.isLunchBreak();
     }
 
+    private void SetGuiPos()
+    {         
+      Point newLocation = new  Point(0,0);
+      Rectangle myScreen = Screen.GetWorkingArea(this);
+      Size myForm = this.Size;
+      newLocation.X = myScreen.Width - myForm.Width;
+      newLocation.Y = myScreen.Height - myForm.Height;
+
+      this.SetDesktopLocation(newLocation.X, newLocation.Y);
+    }
+
+    private void MakeVisible()
+    {
+      SetGuiPos();
+      this.Show();    
+    }
+
     private void WorkTimeGui_Click(object sender, EventArgs e)
     {
       bSmall = !bSmall;
@@ -88,6 +106,9 @@ namespace WindowsFormsWorkTimeApplication
         this.Height = 120;
       else
         this.Height = 218;
+
+
+      SetGuiPos();
     }
 
     private void SetBalloonTip()
@@ -100,13 +121,11 @@ namespace WindowsFormsWorkTimeApplication
     
     private void notifyIcon1_DoubleClick(object sender, EventArgs e)
     {
-      this.Show();
-      this.WindowState = FormWindowState.Normal; 
+      this.MakeVisible();
     }
 
     private void WorkTimeGui_Deactivate(object sender, EventArgs e)
     {
-      this.WindowState = FormWindowState.Minimized;
       this.Hide();
     }
 
@@ -123,9 +142,48 @@ namespace WindowsFormsWorkTimeApplication
 
     private void toolStripMenuItem_Open_Click(object sender, EventArgs e)
     {
-      this.Show();
-      this.WindowState = FormWindowState.Normal;
+      this.MakeVisible();
     }
 
+    private void toolStripMenuItem_About_Click(object sender, EventArgs e)
+    {
+      string copyright = string.Empty;
+      string version = string.Empty;
+      string company = string.Empty;
+      
+      Assembly currentAssem = typeof(WorkTimeGui).Assembly;
+      object[] attribs = currentAssem.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), true);
+
+      if(attribs.Length > 0)
+      {
+        copyright = ((AssemblyCopyrightAttribute)attribs[0]).Copyright;
+      }
+
+      attribs = currentAssem.GetCustomAttributes(typeof(AssemblyVersionAttribute), true);
+
+      if (attribs.Length > 0)
+      {
+        version = ((AssemblyVersionAttribute)attribs[0]).Version;
+      }
+
+      attribs = currentAssem.GetCustomAttributes(typeof(AssemblyCompanyAttribute), true);
+
+      if (attribs.Length > 0)
+      {
+        company = ((AssemblyCompanyAttribute)attribs[0]).Company;
+      }
+
+      AssemblyName thisAssemName = currentAssem.GetName();
+
+      Version ver = thisAssemName.Version;
+
+      version ="Version V" + ver.Major.ToString() + "." + ver.Minor + "\n\nBuild " + ver.Build + "\nRevision " + ver.Revision.ToString();
+
+      MessageBox.Show(version + "\n\n"+ company +"\n" + copyright,
+          "About " + this.ProductName,
+          MessageBoxButtons.OK,
+          MessageBoxIcon.Information,
+          MessageBoxDefaultButton.Button1);
+    }
   }
 }
