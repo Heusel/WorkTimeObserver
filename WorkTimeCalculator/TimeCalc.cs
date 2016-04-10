@@ -27,20 +27,26 @@ namespace WindowsFormsWorkTimeApplication
     public string logFileName;
     public Boolean logFileAddMonthYear;
     public Boolean checkStartTime;
+    public char sepChar;
   
     public TimeCalcSettings()
     {
-      CoffeeBreakDurationMinutes =  15;
-      CoffeeTimeHour      = 9;
+      CoffeeBreakDurationMinutes  =  15;
+      CoffeeTimeHour              = 9;
       
-      LunchBreakDurationMinutes = 30;
-      LunchTimeHour      = 12;
-      StartTimeOffsetMinutes = 10; 
-      DailyWorkTime = 8;
-      DailyWorkLimit     = 10;
-      logFileName = @"WTO_Logging.csv";
-      logFileAddMonthYear = true;
-      checkStartTime = true;
+      LunchBreakDurationMinutes   = 30;
+      LunchTimeHour               = 12;
+
+      StartTimeOffsetMinutes      = 10; 
+      
+      DailyWorkTime               = 8;
+      DailyWorkLimit              = 10;
+      
+      logFileName                 = @"WTO_Logging.csv";
+      logFileAddMonthYear         = true;
+      sepChar                     = ';';
+
+      checkStartTime              = true;
     }
 
     public static TimeCalcSettings Load(string fileName)
@@ -132,10 +138,16 @@ namespace WindowsFormsWorkTimeApplication
         TimeCalcSettings.Save(fileName, settings);
       }
 
+      if (settings.logFileName.LastIndexOf('.') < 0)
+      {
+        settings.logFileName += ".csv";
+      }
+
+
       if (settings.logFileAddMonthYear)
       {
         logFileName = settings.logFileName.Substring(0, settings.logFileName.LastIndexOf('.'));
-        logFileName += "_" + startTime.Year.ToString() + "_" + startTime.ToString("MMMM", System.Globalization.CultureInfo.InvariantCulture);
+        logFileName += "_" + startTime.Year.ToString() + "_" + startTime.ToString("MM", System.Globalization.CultureInfo.InvariantCulture);
         logFileName += settings.logFileName.Substring(settings.logFileName.LastIndexOf('.'));
       }
       else
@@ -298,18 +310,22 @@ namespace WindowsFormsWorkTimeApplication
     public string getLogHeaderString()
     {
       string str;
-      str = "LogDate;LogTime;Start time;CorrectionTime[minutes];WorkTime";
+      str = "Log Date".PadLeft(11)
+          + settings.sepChar + "Log Time".PadLeft(11)
+          + settings.sepChar + "Start Time".PadLeft(11)
+          + settings.sepChar + "Correction Time [minutes]".PadLeft(26)
+          + settings.sepChar + "Work Time".PadLeft(11);
       return str;
     }
 
     public string getLogString()
     {
       string str;
-      str = startTime.ToShortDateString();
-      str += ";" + DateTime.Now.ToShortTimeString();
-      str += ";" + startTime.ToShortTimeString();
-      str += ";" + CorrectionTime.Minutes;
-      str += ";" + getWorkTime();
+      str = startTime.ToShortDateString().PadLeft(11);
+      str += settings.sepChar + DateTime.Now.ToShortTimeString().PadLeft(11);
+      str += settings.sepChar + startTime.ToShortTimeString().PadLeft(11);
+      str += settings.sepChar + CorrectionTime.Minutes.ToString().PadLeft(26);
+      str += settings.sepChar + getWorkTime().PadLeft(11);
       return str;
     }
   }
