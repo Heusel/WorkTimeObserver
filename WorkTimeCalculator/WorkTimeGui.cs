@@ -41,26 +41,26 @@ namespace WindowsFormsWorkTimeApplication
         notifyIcon.ShowBalloonTip(30000);
 
         showNotification = notify;
-        //notifyIcon1_DoubleClick(null,null);
       }    
     }
 
     private void GuiUpdateTimer_Tick(object sender, EventArgs e)
     {
       WorkTime.update();
+
       labelWorkingTime.Text = WorkTime.getWorkTime();
 
       if (WorkTime.isDailyWorkTotalLimit())
       {
         labelWorkingTime.ForeColor = Color.Red;
-        notifyIcon.BalloonTipIcon = ToolTipIcon.Error;
+        notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
         notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Red;
         ShowNotificationMsg( ShowNotification.Alarmtime, "Working Time of " + WorkTime.getWorkTime() + " is too high!!");
       }
       else if (WorkTime.isDailyWorkDone())
       {
         labelWorkingTime.ForeColor = Color.Green;
-        notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
+        notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
         notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Green;
         ShowNotificationMsg(ShowNotification.worktime, "Work of the day is done: " + WorkTime.getWorkTime());
       }
@@ -71,22 +71,23 @@ namespace WindowsFormsWorkTimeApplication
 
      
       notifyIcon.BalloonTipText = "Working Time: " + WorkTime.getWorkTime();
-      notifyIcon.Text = "Working Time: " + WorkTime.getWorkTime();
+      notifyIcon.Text           = notifyIcon.BalloonTipText;     
 
       labelDate.Text       = WorkTime.getStartDate();
       labelStartTime.Text  = WorkTime.getStartTime.ToShortTimeString();
       labelCorrection.Text = WorkTime.getCorrectionTime();
 
       labelCoffeeBreak.Enabled = WorkTime.isCoffeeBreak();
-      labelLunchBreak.Enabled = WorkTime.isLunchBreak();
+      labelLunchBreak.Enabled  = WorkTime.isLunchBreak();
     }
 
     private void SetGuiPos()
     {         
-      Point newLocation = new  Point(0,0);
+      Point newLocation  = new  Point(0,0);
       Rectangle myScreen = Screen.GetWorkingArea(this);
-      Size myForm = this.Size;
-      newLocation.X = myScreen.Width - myForm.Width;
+      Size myForm        = this.Size;
+
+      newLocation.X = myScreen.Width  - myForm.Width;
       newLocation.Y = myScreen.Height - myForm.Height;
 
       this.SetDesktopLocation(newLocation.X, newLocation.Y);
@@ -106,17 +107,16 @@ namespace WindowsFormsWorkTimeApplication
         this.Height = 120;
       else
         this.Height = 218;
-
-
+      
       SetGuiPos();
     }
 
     private void SetBalloonTip()
     {
-      notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Black;
+      notifyIcon.Icon            = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Black;
       notifyIcon.BalloonTipTitle = "W.T.O.";
-      notifyIcon.BalloonTipText = "worktime: " + WorkTime.getWorkTime();
-      notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+      notifyIcon.BalloonTipText  = "worktime: " + WorkTime.getWorkTime();
+      notifyIcon.BalloonTipIcon  = ToolTipIcon.Info;
     }
     
     private void notifyIcon1_DoubleClick(object sender, EventArgs e)
@@ -137,6 +137,16 @@ namespace WindowsFormsWorkTimeApplication
 
     private void toolStripMenuItem_Exit_Click(object sender, EventArgs e)
     {
+      
+      DialogResult result = MessageBox.Show("Do you want to save actual working time into log file?",
+                                             "Exit " + this.ProductName,
+                                             MessageBoxButtons.YesNo);
+            
+      if (result == DialogResult.No)
+      {
+        WorkTime.ignoreLogging = true;
+      }
+
       Application.Exit();      
     }
 
@@ -148,10 +158,12 @@ namespace WindowsFormsWorkTimeApplication
     private void toolStripMenuItem_About_Click(object sender, EventArgs e)
     {
       string copyright = string.Empty;
-      string version = string.Empty;
-      string company = string.Empty;
+      string version   = string.Empty;
+      string company   = string.Empty;
       
       Assembly currentAssem = typeof(WorkTimeGui).Assembly;
+      
+      // get copyright attribute
       object[] attribs = currentAssem.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), true);
 
       if(attribs.Length > 0)
@@ -159,13 +171,7 @@ namespace WindowsFormsWorkTimeApplication
         copyright = ((AssemblyCopyrightAttribute)attribs[0]).Copyright;
       }
 
-      attribs = currentAssem.GetCustomAttributes(typeof(AssemblyVersionAttribute), true);
-
-      if (attribs.Length > 0)
-      {
-        version = ((AssemblyVersionAttribute)attribs[0]).Version;
-      }
-
+      // get company attribute
       attribs = currentAssem.GetCustomAttributes(typeof(AssemblyCompanyAttribute), true);
 
       if (attribs.Length > 0)
@@ -173,8 +179,8 @@ namespace WindowsFormsWorkTimeApplication
         company = ((AssemblyCompanyAttribute)attribs[0]).Company;
       }
 
+      // get the verion an generate special version string
       AssemblyName thisAssemName = currentAssem.GetName();
-
       Version ver = thisAssemName.Version;
 
       version ="Version V" + ver.Major.ToString() + "." + ver.Minor + "\n\nBuild " + ver.Build + "\nRevision " + ver.Revision.ToString();

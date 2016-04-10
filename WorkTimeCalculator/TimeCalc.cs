@@ -38,7 +38,7 @@ namespace WindowsFormsWorkTimeApplication
       StartTimeOffsetMinutes = 10; 
       DailyWorkTime = 8;
       DailyWorkLimit     = 10;
-      logFileName = @"WTO_Logging.txt";
+      logFileName = @"WTO_Logging.csv";
       logFileAddMonthYear = true;
       checkStartTime = true;
     }
@@ -83,6 +83,7 @@ namespace WindowsFormsWorkTimeApplication
     private Boolean running;
     public TimeCalcSettings settings;
     private string logFileName;
+    public Boolean ignoreLogging;
 
     public TimeCalc()
     {
@@ -92,11 +93,25 @@ namespace WindowsFormsWorkTimeApplication
 
     public void log()
     {
-      using (System.IO.StreamWriter sw = new System.IO.StreamWriter(logFileName, true))
+      if (!ignoreLogging)
       {
-        // Add some text to the file.
-        sw.WriteLine(getLogString());
-        sw.Close();
+        bool addHeader = false;
+
+        if (!File.Exists(logFileName))
+        {
+          addHeader = true;
+        }
+
+        using (System.IO.StreamWriter sw = new System.IO.StreamWriter(logFileName, true))
+        {
+          if (addHeader)
+          {
+            sw.WriteLine(getLogHeaderString());
+          }
+          // Add some text to the file.
+          sw.WriteLine(getLogString());
+          sw.Close();
+        }
       }
     }
 
@@ -104,6 +119,7 @@ namespace WindowsFormsWorkTimeApplication
     {
       string fileName;
 
+      ignoreLogging = false;
 
       startTime = DateTime.Now;
    
@@ -163,8 +179,6 @@ namespace WindowsFormsWorkTimeApplication
         }
       }
 
-
-      
       CorrectionTime = new TimeSpan(0, 0, 0);
 
       running = true;
@@ -281,14 +295,21 @@ namespace WindowsFormsWorkTimeApplication
       return str;
     }
 
+    public string getLogHeaderString()
+    {
+      string str;
+      str = "LogDate;LogTime;Start time;CorrectionTime[minutes];WorkTime";
+      return str;
+    }
+
     public string getLogString()
     {
       string str;
       str = startTime.ToShortDateString();
-      str += " " + DateTime.Now.ToShortTimeString();
-      str += "; startTime: " + startTime.ToShortTimeString();
-      str += "; CorrectionTime[minutes]: " + CorrectionTime.Minutes;
-      str += "; WorkTime: " + getWorkTime();
+      str += ";" + DateTime.Now.ToShortTimeString();
+      str += ";" + startTime.ToShortTimeString();
+      str += ";" + CorrectionTime.Minutes;
+      str += ";" + getWorkTime();
       return str;
     }
   }
