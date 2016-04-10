@@ -17,34 +17,39 @@ namespace WindowsFormsWorkTimeApplication
   [Serializable()]
   public class TimeCalcSettings
   {
-    public int CoffeeBreakDurationMinutes;
-    public int LunchBreakDurationMinutes;
     public int StartTimeOffsetMinutes;
-    public int CoffeeTimeHour;
-    public int LunchTimeHour;
+
     public int DailyWorkTime;
-    public int DailyWorkLimit;
-    public string logFileName;
-    public Boolean logFileAddMonthYear;
-    public Boolean checkStartTime;
-    public char sepChar;
+    public int DailyWorkLimit;    
+     
+    public int CoffeeTimeHour; 
+    public int CoffeeBreakDurationMinutes;
+
+    public int LunchTimeHour;
+    public int LunchBreakDurationMinutes;
   
+    public string  logFileName;
+    public Boolean logFileAddMonthYear;
+    public char    logFileSepChar;
+  
+    public Boolean checkStartTime;
+    
     public TimeCalcSettings()
     {
-      CoffeeBreakDurationMinutes  =  15;
-      CoffeeTimeHour              = 9;
-      
-      LunchBreakDurationMinutes   = 30;
-      LunchTimeHour               = 12;
-
       StartTimeOffsetMinutes      = 10; 
       
       DailyWorkTime               = 8;
       DailyWorkLimit              = 10;
+
+      CoffeeTimeHour = 9;
+      CoffeeBreakDurationMinutes = 15;
       
+      LunchTimeHour               = 12;
+      LunchBreakDurationMinutes   = 30;
+   
       logFileName                 = @"WTO_Logging.csv";
       logFileAddMonthYear         = true;
-      sepChar                     = ';';
+      logFileSepChar              = ';';
 
       checkStartTime              = true;
     }
@@ -311,10 +316,10 @@ namespace WindowsFormsWorkTimeApplication
     {
       string str;
       str = "Log Date".PadLeft(11)
-          + settings.sepChar + "Log Time".PadLeft(11)
-          + settings.sepChar + "Start Time".PadLeft(11)
-          + settings.sepChar + "Correction Time [minutes]".PadLeft(26)
-          + settings.sepChar + "Work Time".PadLeft(11);
+          + settings.logFileSepChar + "Log Time".PadLeft(11)
+          + settings.logFileSepChar + "Start Time".PadLeft(11)
+          + settings.logFileSepChar + "Correction Time [minutes]".PadLeft(26)
+          + settings.logFileSepChar + "Work Time".PadLeft(11);
       return str;
     }
 
@@ -322,10 +327,10 @@ namespace WindowsFormsWorkTimeApplication
     {
       string str;
       str = startTime.ToShortDateString().PadLeft(11);
-      str += settings.sepChar + DateTime.Now.ToShortTimeString().PadLeft(11);
-      str += settings.sepChar + startTime.ToShortTimeString().PadLeft(11);
-      str += settings.sepChar + CorrectionTime.Minutes.ToString().PadLeft(26);
-      str += settings.sepChar + getWorkTime().PadLeft(11);
+      str += settings.logFileSepChar + DateTime.Now.ToShortTimeString().PadLeft(11);
+      str += settings.logFileSepChar + startTime.ToShortTimeString().PadLeft(11);
+      str += settings.logFileSepChar + CorrectionTime.Minutes.ToString().PadLeft(26);
+      str += settings.logFileSepChar + getWorkTime().PadLeft(11);
       return str;
     }
   }
