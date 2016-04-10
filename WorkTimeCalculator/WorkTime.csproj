@@ -33,7 +33,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>1458386532_ChirstmaxShop_worktime.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -80,7 +81,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="1458386532_ChirstmaxShop_worktime.ico" />
     <Content Include="Worktime_Black.ico" />
     <Content Include="Worktime_Green.ico" />
     <Content Include="Worktime_Red.ico" />
