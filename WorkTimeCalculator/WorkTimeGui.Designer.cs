@@ -127,7 +127,7 @@
       this.notifyIcon.ContextMenuStrip = this.contextMenuStrip_Notification;
       this.notifyIcon.Text = "notifyIcon1";
       this.notifyIcon.Visible = true;
-      this.notifyIcon.DoubleClick += new System.EventHandler(this.notifyIcon1_DoubleClick);
+      this.notifyIcon.DoubleClick += new System.EventHandler(this.notifyIcon_Click);
       // 
       // contextMenuStrip_Notification
       // 
@@ -215,7 +215,6 @@
       this.MaximizeBox = false;
       this.Name = "WorkTimeGui";
       this.ShowInTaskbar = false;
-      this.Text = "W.T.O.";
       this.Deactivate += new System.EventHandler(this.WorkTimeGui_Deactivate);
       this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.WorkTimeGui_FormClosing);
       this.DoubleClick += new System.EventHandler(this.WorkTimeGui_Click);

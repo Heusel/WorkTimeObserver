@@ -26,22 +26,12 @@ namespace WindowsFormsWorkTimeApplication
       InitializeComponent();
       SetGuiPos();
       SetBalloonTip();
+      this.Text = this.ProductName;
+      this.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Black;
       bSmall = false;
       GuiUpdateTimer_Tick(null, null);
       WorkTimeGui_Deactivate(null, null);
       GuiUpdateTimer.Enabled = true;
-    }
-
-    private void ShowNotificationMsg(ShowNotification notify, string str)
-    {
-      if (showNotification != notify)
-      {
-        notifyIcon.BalloonTipText = str;
-        notifyIcon.Visible = true;
-        notifyIcon.ShowBalloonTip(30000);
-
-        showNotification = notify;
-      }    
     }
 
     private void GuiUpdateTimer_Tick(object sender, EventArgs e)
@@ -52,21 +42,40 @@ namespace WindowsFormsWorkTimeApplication
 
       if (WorkTime.isDailyWorkTotalLimit())
       {
-        labelWorkingTime.ForeColor = Color.Red;
-        notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
-        notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Red;
-        ShowNotificationMsg( ShowNotification.Alarmtime, "Working Time of " + WorkTime.getWorkTime() + " is too high!!");
+        if (showNotification != ShowNotification.Alarmtime)
+        {
+          labelWorkingTime.ForeColor = Color.Red;
+          notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
+          notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Red;
+
+          notifyIcon.BalloonTipText = "Working Time of " + WorkTime.getWorkTime() + " is too high!!";
+          notifyIcon.Visible = true;
+          notifyIcon.ShowBalloonTip(30000);
+
+          showNotification = ShowNotification.Alarmtime;
+        }
       }
-      else if (WorkTime.isDailyWorkDone())
+      else if (WorkTime.isDailyWorkDone() )
       {
-        labelWorkingTime.ForeColor = Color.Green;
-        notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
-        notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Green;
-        ShowNotificationMsg(ShowNotification.worktime, "Work of the day is done: " + WorkTime.getWorkTime());
+        if ((showNotification != ShowNotification.worktime))
+        {
+          labelWorkingTime.ForeColor = Color.Green;
+          notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
+          notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Green;
+          notifyIcon.BalloonTipText = "Working Time of " + "Work of the day is done: " + WorkTime.getWorkTime();
+          notifyIcon.Visible = true;
+          notifyIcon.ShowBalloonTip(30000);
+
+          showNotification = ShowNotification.worktime;
+        }
       }
       else
       {
-        labelWorkingTime.ForeColor = SystemColors.ControlText;
+        if ((showNotification != ShowNotification.not))
+        {
+          labelWorkingTime.ForeColor = SystemColors.ControlText;
+          notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Black;
+        }
       }
 
      
@@ -117,11 +126,6 @@ namespace WindowsFormsWorkTimeApplication
       notifyIcon.BalloonTipTitle = "W.T.O.";
       notifyIcon.BalloonTipText  = "worktime: " + WorkTime.getWorkTime();
       notifyIcon.BalloonTipIcon  = ToolTipIcon.Info;
-    }
-    
-    private void notifyIcon1_DoubleClick(object sender, EventArgs e)
-    {
-      this.MakeVisible();
     }
 
     private void WorkTimeGui_Deactivate(object sender, EventArgs e)
@@ -183,13 +187,18 @@ namespace WindowsFormsWorkTimeApplication
       AssemblyName thisAssemName = currentAssem.GetName();
       Version ver = thisAssemName.Version;
 
-      version ="Version V" + ver.Major.ToString() + "." + ver.Minor + "\n\nBuild " + ver.Build + "\nRevision " + ver.Revision.ToString();
+      version = this.ProductName +  " V" + ver.Major + "." + ver.Minor + "." + ver.Build;
 
-      MessageBox.Show(version + "\n\n"+ company +"\n" + copyright,
-          "About " + this.ProductName,
+      MessageBox.Show(version + "\n"+ company +"\n" + copyright,
+          "About" ,
           MessageBoxButtons.OK,
           MessageBoxIcon.Information,
           MessageBoxDefaultButton.Button1);
+    }
+    
+    private void notifyIcon_Click(object sender, EventArgs e)
+    {
+      this.MakeVisible();
     }
   }
 }
