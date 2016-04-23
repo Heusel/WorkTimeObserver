@@ -247,7 +247,7 @@ namespace WindowsFormsWorkTimeApplication
         }
         catch (Exception ParseException)
         {
-
+          //ignore exception so we only leave menu with correct time setting  
         }
       }
     }

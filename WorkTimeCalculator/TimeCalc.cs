@@ -36,7 +36,6 @@ namespace WindowsFormsWorkTimeApplication
     public Boolean logFileAddMonthYear;
     public char logFileSepChar;
 
-    public Boolean checkStartTime;
     
     public TimeCalcSettings()
     {
@@ -52,15 +51,12 @@ namespace WindowsFormsWorkTimeApplication
       LunchBreakDurationMinutes   = 30;
 
       EnableWorktimeStartStop     = true;
-
       WorktimeStartHour           = 6;
       WorktimeStopHour            = 24;
    
       logFileName                 = @"WTO_Logging.csv";
       logFileAddMonthYear         = true;
       logFileSepChar              = ';';
-
-      checkStartTime              = true;
     }
 
     public static TimeCalcSettings Load(string fileName)
@@ -171,40 +167,37 @@ namespace WindowsFormsWorkTimeApplication
       CorrectionTime = new TimeSpan();
 
 
-      if (settings.checkStartTime)
+      DateTime ob = new DateTime();
+
+      fileName = @"WTO_startTime.xml";
+
+      if (File.Exists(fileName) & !ignoreTempFile)
       {
-        DateTime ob = new DateTime();
 
-        fileName = @"WTO_startTime.xml";
+        XmlSerializer SerializerObj = new XmlSerializer(typeof(DateTime));
+        FileStream ReadFileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-        if (File.Exists(fileName) & !ignoreTempFile)
-        {
+        // Load the object saved above by using the Deserialize function
 
-          XmlSerializer SerializerObj = new XmlSerializer(typeof(DateTime));
-          FileStream ReadFileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+        startTime = (DateTime)SerializerObj.Deserialize(ReadFileStream);
 
-          // Load the object saved above by using the Deserialize function
+        // Cleanup
+        ReadFileStream.Close();
+      }
 
-          startTime = (DateTime)SerializerObj.Deserialize(ReadFileStream);
+      if (ob.Date != startTime.Date)
+      {
+        XmlSerializer SerializerObj = new XmlSerializer(typeof(DateTime));
+        // Create a new file stream to write the serialized object to a file
+        TextWriter WriteFileStream = new StreamWriter(fileName);
+        SerializerObj.Serialize(WriteFileStream, startTime);
 
-          // Cleanup
-          ReadFileStream.Close();
-        }
-
-        if (ob.Date != startTime.Date)
-        {
-          XmlSerializer SerializerObj = new XmlSerializer(typeof(DateTime));
-          // Create a new file stream to write the serialized object to a file
-          TextWriter WriteFileStream = new StreamWriter(fileName);
-          SerializerObj.Serialize(WriteFileStream, startTime);
-
-          // Cleanup
-          WriteFileStream.Close();
-        }
-        else
-        {
-          startTime = ob;
-        }
+        // Cleanup
+        WriteFileStream.Close();
+      }
+      else
+      {
+        startTime = ob;
       }
       running = true;
     }
@@ -282,7 +275,7 @@ namespace WindowsFormsWorkTimeApplication
       DateTime actualDateTime = DateTime.Now;
 
       if (settings.EnableWorktimeStartStop & ((actualDateTime.Hour < settings.WorktimeStartHour)
-          || (actualDateTime.Hour > settings.WorktimeStopHour)))
+          || (actualDateTime.Hour >= settings.WorktimeStopHour)))
       {
         return false;      
       }
