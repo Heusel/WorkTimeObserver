@@ -28,14 +28,14 @@ namespace WindowsFormsWorkTimeApplication
     public int LunchTimeHour;
     public int LunchBreakDurationMinutes;
 
+    public Boolean EnableWorktimeStartStop;
     public int WorktimeStartHour;
     public int WorktimeStopHour;
 
-  
-    public string  logFileName;
+    public string logFileName;
     public Boolean logFileAddMonthYear;
-    public char    logFileSepChar;
-  
+    public char logFileSepChar;
+
     public Boolean checkStartTime;
     
     public TimeCalcSettings()
@@ -46,10 +46,12 @@ namespace WindowsFormsWorkTimeApplication
       DailyWorkLimit              = 10;
 
       CoffeeTimeHour = 9;
-      CoffeeBreakDurationMinutes = 15;
+      CoffeeBreakDurationMinutes  = 15;
       
       LunchTimeHour               = 12;
       LunchBreakDurationMinutes   = 30;
+
+      EnableWorktimeStartStop     = true;
 
       WorktimeStartHour           = 6;
       WorktimeStopHour            = 24;
@@ -105,7 +107,7 @@ namespace WindowsFormsWorkTimeApplication
 
     public TimeCalc()
     {
-      init();
+      init(DateTime.Now);
     }
 
 
@@ -133,13 +135,11 @@ namespace WindowsFormsWorkTimeApplication
       }
     }
 
-    private void init()
+    private void init(DateTime startTimePara, Boolean ignoreTempFile = false)
     {
       string fileName;
 
       ignoreLogging = false;
-
-      DateTime actualTime = DateTime.Now;
    
       fileName = @"WTO_setting.xml";
       settings = TimeCalcSettings.Load(fileName);
@@ -159,7 +159,7 @@ namespace WindowsFormsWorkTimeApplication
       if (settings.logFileAddMonthYear)
       {
         logFileName = settings.logFileName.Substring(0, settings.logFileName.LastIndexOf('.'));
-        logFileName += "_" + actualTime.Year.ToString() + "_" + actualTime.ToString("MM", System.Globalization.CultureInfo.InvariantCulture);
+        logFileName += "_" + startTimePara.Year.ToString() + "_" + startTimePara.ToString("MM", System.Globalization.CultureInfo.InvariantCulture);
         logFileName += settings.logFileName.Substring(settings.logFileName.LastIndexOf('.'));
       }
       else
@@ -167,33 +167,39 @@ namespace WindowsFormsWorkTimeApplication
         logFileName = settings.logFileName;
       }
 
-      SetStartTime(actualTime);
+      startTime = startTimePara - TimeSpan.FromMinutes(settings.StartTimeOffsetMinutes);
+      CorrectionTime = new TimeSpan();
+
+
       if (settings.checkStartTime)
       {
         DateTime ob = new DateTime();
 
-        fileName = @"WTO_startTime.tmp";
+        fileName = @"WTO_startTime.xml";
 
-        if (File.Exists(fileName))
+        if (File.Exists(fileName) & !ignoreTempFile)
         {
-          Stream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-          // Now create a binary formatter (it is up to you to ensure that code uses the same formatter for serialization
-          // and deserialization
-          System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+          XmlSerializer SerializerObj = new XmlSerializer(typeof(DateTime));
+          FileStream ReadFileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
 
-          // Deserialize the object and use it. Note: Constructors will not be called
-          ob = (DateTime)formatter.Deserialize(stream);
-          stream.Close();
+          // Load the object saved above by using the Deserialize function
+
+          startTime = (DateTime)SerializerObj.Deserialize(ReadFileStream);
+
+          // Cleanup
+          ReadFileStream.Close();
         }
 
         if (ob.Date != startTime.Date)
         {
-          Stream stream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Write);
-          System.Runtime.Serialization.IFormatter formatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+          XmlSerializer SerializerObj = new XmlSerializer(typeof(DateTime));
+          // Create a new file stream to write the serialized object to a file
+          TextWriter WriteFileStream = new StreamWriter(fileName);
+          SerializerObj.Serialize(WriteFileStream, startTime);
 
-          formatter.Serialize(stream, startTime);
-          stream.Close();
+          // Cleanup
+          WriteFileStream.Close();
         }
         else
         {
@@ -205,9 +211,7 @@ namespace WindowsFormsWorkTimeApplication
 
     public void SetStartTime(DateTime setTime)
     {
-      startTime = setTime - TimeSpan.FromMinutes(settings.StartTimeOffsetMinutes);
-      
-      CorrectionTime = new TimeSpan(0, 0, 0);
+      init(setTime, true); 
     }
 
     public DateTime getStartTime
@@ -277,30 +281,26 @@ namespace WindowsFormsWorkTimeApplication
     {
       DateTime actualDateTime = DateTime.Now;
 
-      if ((actualDateTime.Hour < settings.WorktimeStartHour)
-          || (actualDateTime.Hour > settings.WorktimeStopHour))
+      if (settings.EnableWorktimeStartStop & ((actualDateTime.Hour < settings.WorktimeStartHour)
+          || (actualDateTime.Hour > settings.WorktimeStopHour)))
       {
         return false;      
       }
 
       if (startTime.Date != actualDateTime.Date)
       {
-
         log();
-        init();
+        init(DateTime.Now, true);
       }
-
-
+      
       DiffTime = actualDateTime - startTime;
-
-
+      
       if (isCoffeeBreak()
         && (CorrectionTime.Minutes < settings.CoffeeBreakDurationMinutes))
       {
         CorrectionTime += TimeSpan.FromMinutes( settings.CoffeeBreakDurationMinutes);
       }
       
-
       if (isLunchBreak()
         && (CorrectionTime.Minutes < settings.LunchBreakDurationMinutes))
       {
@@ -335,8 +335,8 @@ namespace WindowsFormsWorkTimeApplication
     public string getLogHeaderString()
     {
       string str;
-      str = "Log Date".PadLeft(11)
-          + settings.logFileSepChar + "Log Time".PadLeft(11)
+      str = "Log Timestamp".PadLeft(19)
+          + settings.logFileSepChar + "Start Date".PadLeft(11)
           + settings.logFileSepChar + "Start Time".PadLeft(11)
           + settings.logFileSepChar + "Correction Time [minutes]".PadLeft(26)
           + settings.logFileSepChar + "Work Time".PadLeft(11);
@@ -346,8 +346,9 @@ namespace WindowsFormsWorkTimeApplication
     public string getLogString()
     {
       string str;
-      str = startTime.ToShortDateString().PadLeft(11);
-      str += settings.logFileSepChar + DateTime.Now.ToShortTimeString().PadLeft(11);
+      
+      str =  DateTime.Now.ToString().PadLeft(19);
+      str += settings.logFileSepChar +startTime.ToShortDateString().PadLeft(11); 
       str += settings.logFileSepChar + startTime.ToShortTimeString().PadLeft(11);
       str += settings.logFileSepChar + CorrectionTime.Minutes.ToString().PadLeft(26);
       str += settings.logFileSepChar + getWorkTime().PadLeft(11);

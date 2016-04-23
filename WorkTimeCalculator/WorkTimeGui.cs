@@ -56,9 +56,9 @@ namespace WindowsFormsWorkTimeApplication
           notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
           notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Red;
 
-          notifyIcon.BalloonTipText = "Working Time of " + WorkTime.getWorkTime() + " is too high!!";
+          notifyIcon.BalloonTipText = "Working Time is too high! " + WorkTime.getWorkTime();
           notifyIcon.Visible = true;
-          notifyIcon.ShowBalloonTip(30000);
+          notifyIcon.ShowBalloonTip(30);
 
           showNotification = ShowNotification.Alarmtime;
         }
@@ -70,9 +70,9 @@ namespace WindowsFormsWorkTimeApplication
           labelWorkingTime.ForeColor = Color.Green;
           notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
           notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Green;
-          notifyIcon.BalloonTipText = "Working Time of " + "Work of the day is done: " + WorkTime.getWorkTime();
+          notifyIcon.BalloonTipText = "Work of the day is done! " + WorkTime.getWorkTime();
           notifyIcon.Visible = true;
-          notifyIcon.ShowBalloonTip(30000);
+          notifyIcon.ShowBalloonTip(30);
 
           showNotification = ShowNotification.worktime;
         }
@@ -113,7 +113,8 @@ namespace WindowsFormsWorkTimeApplication
     private void MakeVisible()
     {
       SetGuiPos();
-      this.Show();    
+      this.Show();     
+      this.Activate();
     }
 
     private void WorkTimeGui_Click(object sender, EventArgs e)
@@ -206,17 +207,49 @@ namespace WindowsFormsWorkTimeApplication
     
     private void notifyIcon_Click(object sender, EventArgs e)
     {
-      this.MakeVisible();
+      MouseEventArgs me = (MouseEventArgs)e;
+      if(me.Button == MouseButtons.Left)
+        this.MakeVisible();
     }
-
-    private void toolStripTextBox1_Click(object sender, EventArgs e)
-    {
-
-    }
-
+    
     private void timeNowToolStripMenuItem_Click(object sender, EventArgs e)
     {
-      WorkTime.SetStartTime(DateTime.Now);
+      CheckAndSetStartTime(DateTime.Now);
+    }
+    
+    private void toolStripMenuItem1_DropDownOpening(object sender, EventArgs e)
+    {
+      toolStripTextBox1.Text = WorkTime.getStartTime.ToShortTimeString();
+    }
+
+    private void CheckAndSetStartTime(DateTime newStartTime)
+    {
+      DialogResult result = MessageBox.Show("Set start time to " + newStartTime.ToShortTimeString() + " - " + WorkTime.settings.StartTimeOffsetMinutes + " minutes", "New start time", MessageBoxButtons.YesNo);
+
+      if (result == DialogResult.Yes)
+      {
+        WorkTime.SetStartTime(newStartTime);
+        GuiUpdateTimer_Tick(null, null);
+      }    
+    }
+
+    private void toolStripTextBox1_KeyUp(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Return)
+      {
+        try
+        {
+          DateTime dt = DateTime.ParseExact(toolStripTextBox1.Text.Trim(), "H:mm", System.Globalization.CultureInfo.InvariantCulture);
+
+          contextMenuStrip_Notification.Close();
+
+          CheckAndSetStartTime(dt);
+        }
+        catch (Exception ParseException)
+        {
+
+        }
+      }
     }
   }
 }
