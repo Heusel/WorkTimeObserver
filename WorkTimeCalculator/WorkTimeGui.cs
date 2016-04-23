@@ -24,7 +24,7 @@ namespace WindowsFormsWorkTimeApplication
       WorkTime = new TimeCalc();
         
       InitializeComponent();
-      SetGuiPos();
+     
       SetBalloonTip();
       this.Text = this.ProductName;
       this.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Black;
@@ -32,11 +32,19 @@ namespace WindowsFormsWorkTimeApplication
       GuiUpdateTimer_Tick(null, null);
       WorkTimeGui_Deactivate(null, null);
       GuiUpdateTimer.Enabled = true;
+      SetGuiPos();
     }
 
     private void GuiUpdateTimer_Tick(object sender, EventArgs e)
     {
-      WorkTime.update();
+      if (WorkTime.update())
+      {
+        this.Enabled = true;
+      }
+      else
+      {
+        this.Enabled = false;
+      }
 
       labelWorkingTime.Text = WorkTime.getWorkTime();
 
@@ -199,6 +207,16 @@ namespace WindowsFormsWorkTimeApplication
     private void notifyIcon_Click(object sender, EventArgs e)
     {
       this.MakeVisible();
+    }
+
+    private void toolStripTextBox1_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void timeNowToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+      WorkTime.SetStartTime(DateTime.Now);
     }
   }
 }
