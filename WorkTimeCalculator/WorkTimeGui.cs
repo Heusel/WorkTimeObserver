@@ -27,7 +27,7 @@ namespace WindowsFormsWorkTimeApplication
      
       SetBalloonTip();
       this.Text = this.ProductName;
-      this.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Black;
+      this.Icon = (Icon)global::WorkingTimeObserver.Properties.Resources.Worktime_Black;
       bSmall = false;
       GuiUpdateTimer_Tick(null, null);
       WorkTimeGui_Deactivate(null, null);
@@ -54,9 +54,9 @@ namespace WindowsFormsWorkTimeApplication
         {
           labelWorkingTime.ForeColor = Color.Red;
           notifyIcon.BalloonTipIcon = ToolTipIcon.Warning;
-          notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Red;
+          notifyIcon.Icon = (Icon)global::WorkingTimeObserver.Properties.Resources.Worktime_Red;
 
-          notifyIcon.BalloonTipText = "Working Time is too high! " + WorkTime.getWorkTime();
+          notifyIcon.BalloonTipText = "Working time is too high! " + WorkTime.getWorkTime();
           notifyIcon.Visible = true;
           notifyIcon.ShowBalloonTip(30);
 
@@ -69,8 +69,8 @@ namespace WindowsFormsWorkTimeApplication
         {
           labelWorkingTime.ForeColor = Color.Green;
           notifyIcon.BalloonTipIcon = ToolTipIcon.Info;
-          notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Green;
-          notifyIcon.BalloonTipText = "Work of the day is done! " + WorkTime.getWorkTime();
+          notifyIcon.Icon = (Icon)global::WorkingTimeObserver.Properties.Resources.Worktime_Green;
+          notifyIcon.BalloonTipText = "Daily working time limit reached! " + WorkTime.getWorkTime();
           notifyIcon.Visible = true;
           notifyIcon.ShowBalloonTip(30);
 
@@ -82,7 +82,7 @@ namespace WindowsFormsWorkTimeApplication
         if ((showNotification != ShowNotification.not))
         {
           labelWorkingTime.ForeColor = SystemColors.ControlText;
-          notifyIcon.Icon = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Black;
+          notifyIcon.Icon = (Icon)global::WorkingTimeObserver.Properties.Resources.Worktime_Black;
         }
       }
 
@@ -131,9 +131,9 @@ namespace WindowsFormsWorkTimeApplication
 
     private void SetBalloonTip()
     {
-      notifyIcon.Icon            = (Icon)global::WorkTimeObserver.Properties.Resources.Worktime_Black;
+      notifyIcon.Icon            = (Icon)global::WorkingTimeObserver.Properties.Resources.Worktime_Black;
       notifyIcon.BalloonTipTitle = "W.T.O.";
-      notifyIcon.BalloonTipText  = "worktime: " + WorkTime.getWorkTime();
+      notifyIcon.BalloonTipText  = "Working time: " + WorkTime.getWorkTime();
       notifyIcon.BalloonTipIcon  = ToolTipIcon.Info;
     }
 
@@ -151,7 +151,7 @@ namespace WindowsFormsWorkTimeApplication
     private void toolStripMenuItem_Exit_Click(object sender, EventArgs e)
     {
       
-      DialogResult result = MessageBox.Show("Do you want to save actual working time into log file?",
+      DialogResult result = MessageBox.Show("Do you want to save the current working time into log file?",
                                              "Exit " + this.ProductName,
                                              MessageBoxButtons.YesNo);
             
@@ -224,13 +224,19 @@ namespace WindowsFormsWorkTimeApplication
 
     private void CheckAndSetStartTime(DateTime newStartTime)
     {
-      DialogResult result = MessageBox.Show("Set start time to " + newStartTime.ToShortTimeString() + " - " + WorkTime.settings.StartTimeOffsetMinutes + " minutes", "New start time", MessageBoxButtons.YesNo);
+      DialogResult result = MessageBox.Show("Correcting start time (" + newStartTime.ToShortTimeString() + ") with offset (" + WorkTime.settings.StartTimeOffsetMinutes + " minutes)?", "New start time", MessageBoxButtons.YesNoCancel);
 
       if (result == DialogResult.Yes)
       {
-        WorkTime.SetStartTime(newStartTime);
+        WorkTime.SetStartTime(newStartTime, true);
         GuiUpdateTimer_Tick(null, null);
-      }    
+      }
+      
+      if (result == DialogResult.No)
+      {
+        WorkTime.SetStartTime(newStartTime, false);
+        GuiUpdateTimer_Tick(null, null);
+      }
     }
 
     private void toolStripTextBox1_KeyUp(object sender, KeyEventArgs e)

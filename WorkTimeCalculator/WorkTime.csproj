@@ -7,8 +7,8 @@
     <ProjectGuid>{ECEB9963-8980-496E-A30C-065A44275318}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WorkTimeObserver</RootNamespace>
-    <AssemblyName>WorkTimeObserver</AssemblyName>
+    <RootNamespace>WorkingTimeObserver</RootNamespace>
+    <AssemblyName>WTO</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -92,7 +92,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Worktime_Black.ico" />

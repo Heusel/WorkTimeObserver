@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("W.T.O.")]
-[assembly: AssemblyDescription("Working Time Observer")]
+[assembly: AssemblyTitle("Working Time Observer")]
+[assembly: AssemblyDescription("shows the actual status of working time")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Johannes Heusel")]
 [assembly: AssemblyProduct("W.T.O.")]
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.6.5.0")]
-[assembly: AssemblyFileVersion("0.6.5.0")]
+[assembly: AssemblyVersion("0.7.1.0")]
+[assembly: AssemblyFileVersion("0.7.1.0")]

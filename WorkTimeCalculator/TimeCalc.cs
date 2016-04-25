@@ -19,8 +19,8 @@ namespace WindowsFormsWorkTimeApplication
   {
     public int StartTimeOffsetMinutes;
 
-    public int DailyWorkTime;
-    public int DailyWorkLimit;    
+    public int DailyWorkingTime;
+    public int DailyWorkingTimeLimit;    
      
     public int CoffeeTimeHour; 
     public int CoffeeBreakDurationMinutes;
@@ -28,9 +28,9 @@ namespace WindowsFormsWorkTimeApplication
     public int LunchTimeHour;
     public int LunchBreakDurationMinutes;
 
-    public Boolean EnableWorktimeStartStop;
-    public int WorktimeStartHour;
-    public int WorktimeStopHour;
+    public Boolean EnableWorkingTimeStartStop;
+    public int WorkingTimeStartHour;
+    public int WorkingTimeStopHour;
 
     public string logFileName;
     public Boolean logFileAddMonthYear;
@@ -41,8 +41,8 @@ namespace WindowsFormsWorkTimeApplication
     {
       StartTimeOffsetMinutes      = 10; 
       
-      DailyWorkTime               = 8;
-      DailyWorkLimit              = 10;
+      DailyWorkingTime            = 8;
+      DailyWorkingTimeLimit       = 10;
 
       CoffeeTimeHour = 9;
       CoffeeBreakDurationMinutes  = 15;
@@ -50,9 +50,9 @@ namespace WindowsFormsWorkTimeApplication
       LunchTimeHour               = 12;
       LunchBreakDurationMinutes   = 30;
 
-      EnableWorktimeStartStop     = true;
-      WorktimeStartHour           = 6;
-      WorktimeStopHour            = 24;
+      EnableWorkingTimeStartStop     = true;
+      WorkingTimeStartHour = 6;
+      WorkingTimeStopHour = 24;
    
       logFileName                 = @"WTO_Logging.csv";
       logFileAddMonthYear         = true;
@@ -103,7 +103,7 @@ namespace WindowsFormsWorkTimeApplication
 
     public TimeCalc()
     {
-      init(DateTime.Now);
+      init();
     }
 
 
@@ -124,14 +124,17 @@ namespace WindowsFormsWorkTimeApplication
           {
             sw.WriteLine(getLogHeaderString());
           }
-          // Add some text to the file.
           sw.WriteLine(getLogString());
           sw.Close();
         }
       }
     }
+    private void init()
+    {
+      init(DateTime.Now, false, true);    
+    }
 
-    private void init(DateTime startTimePara, Boolean ignoreTempFile = false)
+    private void init(DateTime startTimePara, Boolean ignoreTempFile, Boolean useStartTimeOffset)
     {
       string fileName;
 
@@ -154,7 +157,7 @@ namespace WindowsFormsWorkTimeApplication
 
       if (settings.logFileAddMonthYear)
       {
-        logFileName = settings.logFileName.Substring(0, settings.logFileName.LastIndexOf('.'));
+        logFileName =  settings.logFileName.Substring(0, settings.logFileName.LastIndexOf('.'));
         logFileName += "_" + startTimePara.Year.ToString() + "_" + startTimePara.ToString("MM", System.Globalization.CultureInfo.InvariantCulture);
         logFileName += settings.logFileName.Substring(settings.logFileName.LastIndexOf('.'));
       }
@@ -163,7 +166,13 @@ namespace WindowsFormsWorkTimeApplication
         logFileName = settings.logFileName;
       }
 
-      startTime = startTimePara - TimeSpan.FromMinutes(settings.StartTimeOffsetMinutes);
+      startTime = startTimePara;
+
+      if (useStartTimeOffset)
+      {
+        startTime -= TimeSpan.FromMinutes(settings.StartTimeOffsetMinutes);
+      }
+
       CorrectionTime = new TimeSpan();
 
 
@@ -202,9 +211,9 @@ namespace WindowsFormsWorkTimeApplication
       running = true;
     }
 
-    public void SetStartTime(DateTime setTime)
+    public void SetStartTime(DateTime setTime, Boolean useStartTimeOffset)
     {
-      init(setTime, true); 
+      init(setTime, true, useStartTimeOffset); 
     }
 
     public DateTime getStartTime
@@ -221,9 +230,9 @@ namespace WindowsFormsWorkTimeApplication
     public Boolean isDailyWorkDone()
     {
       #if (DEBUGIT)
-        if (DiffTime.Minutes >= settings.DailyWorkTime)
+        if (DiffTime.Minutes >= settings.DailyWorkingTime)
       #else
-        if (DiffTime.Hours >= settings.DailyWorkTime)
+        if (DiffTime.Hours >= settings.DailyWorkingTime)
       #endif
       {
         return true;
@@ -237,9 +246,9 @@ namespace WindowsFormsWorkTimeApplication
     public Boolean isDailyWorkTotalLimit()
     {
       #if (DEBUGIT)
-        if (DiffTime.Minutes >= settings.DailyWorkLimit)
+        if (DiffTime.Minutes >= settings.DailyWorkingTimeLimit)
       #else
-        if (DiffTime.Hours >= settings.DailyWorkLimit)
+        if (DiffTime.Hours >= settings.DailyWorkingTimeLimit)
       #endif
       {
         return true;
@@ -252,8 +261,8 @@ namespace WindowsFormsWorkTimeApplication
 
     public Boolean isCoffeeBreak()
     {  
-      if ( ( startTime.Hour < settings.CoffeeTimeHour )
-        && ( DateTime.Now.Hour >= settings.CoffeeTimeHour ) )
+      if ( (startTime.Hour < settings.CoffeeTimeHour)
+        && (DateTime.Now.Hour >= settings.CoffeeTimeHour) )
         return true;
       else
         return false;
@@ -262,8 +271,8 @@ namespace WindowsFormsWorkTimeApplication
      
     public Boolean isLunchBreak()
     {  
-      if ( ( startTime.Hour < settings.LunchTimeHour )
-        && ( DateTime.Now.Hour >= settings.LunchTimeHour ) )
+      if ( (startTime.Hour < settings.LunchTimeHour)
+        && (DateTime.Now.Hour >= settings.LunchTimeHour) )
         return true;
       else
         return false;
@@ -274,16 +283,17 @@ namespace WindowsFormsWorkTimeApplication
     {
       DateTime actualDateTime = DateTime.Now;
 
-      if (settings.EnableWorktimeStartStop & ((actualDateTime.Hour < settings.WorktimeStartHour)
-          || (actualDateTime.Hour >= settings.WorktimeStopHour)))
+      if (settings.EnableWorkingTimeStartStop
+        && ((actualDateTime.Hour < settings.WorkingTimeStartHour)
+        || (actualDateTime.Hour >= settings.WorkingTimeStopHour)))
       {
         return false;      
       }
 
-      if (startTime.Date != actualDateTime.Date)
+      if ( startTime.Date != actualDateTime.Date )
       {
         log();
-        init(DateTime.Now, true);
+        init(DateTime.Now, true, false);
       }
       
       DiffTime = actualDateTime - startTime;
@@ -309,7 +319,9 @@ namespace WindowsFormsWorkTimeApplication
     public string getWorkTime()
     {
       string str = DiffTime.ToString();
+      
       str = str.Substring(0, str.LastIndexOf(':'));
+      
       return str;
     }
 
@@ -321,18 +333,22 @@ namespace WindowsFormsWorkTimeApplication
     public string getCorrectionTime()
     {
       string str = CorrectionTime.ToString();
+      
       str = str.Substring(0, str.LastIndexOf(':'));
+      
       return str;
     }
 
     public string getLogHeaderString()
     {
       string str;
-      str = "Log Timestamp".PadLeft(19)
-          + settings.logFileSepChar + "Start Date".PadLeft(11)
-          + settings.logFileSepChar + "Start Time".PadLeft(11)
-          + settings.logFileSepChar + "Correction Time [minutes]".PadLeft(26)
-          + settings.logFileSepChar + "Work Time".PadLeft(11);
+
+      str =  "Log Timestamp".PadLeft(19);
+      str += settings.logFileSepChar + "Start Date".PadLeft(10);
+      str += settings.logFileSepChar + "Start Time".PadLeft(10);
+      str += settings.logFileSepChar + "Correction Time [minutes]".PadLeft(25);
+      str += settings.logFileSepChar + "Working Time".PadLeft(12);
+      
       return str;
     }
 
@@ -341,10 +357,11 @@ namespace WindowsFormsWorkTimeApplication
       string str;
       
       str =  DateTime.Now.ToString().PadLeft(19);
-      str += settings.logFileSepChar +startTime.ToShortDateString().PadLeft(11); 
-      str += settings.logFileSepChar + startTime.ToShortTimeString().PadLeft(11);
-      str += settings.logFileSepChar + CorrectionTime.Minutes.ToString().PadLeft(26);
-      str += settings.logFileSepChar + getWorkTime().PadLeft(11);
+      str += settings.logFileSepChar + startTime.ToShortDateString().PadLeft(10); 
+      str += settings.logFileSepChar + startTime.ToShortTimeString().PadLeft(10);
+      str += settings.logFileSepChar + CorrectionTime.Minutes.ToString().PadLeft(25);
+      str += settings.logFileSepChar + getWorkTime().PadLeft(12);
+      
       return str;
     }
   }
