@@ -150,16 +150,17 @@ namespace WindowsFormsWorkTimeApplication
 
     private void toolStripMenuItem_Exit_Click(object sender, EventArgs e)
     {
-      
-      DialogResult result = MessageBox.Show("Do you want to save the current working time into log file?",
-                                             "Exit " + this.ProductName,
-                                             MessageBoxButtons.YesNo);
-            
-      if (result == DialogResult.No)
+      if (WorkTime.enableLogging == true)
       {
-        WorkTime.ignoreLogging = true;
-      }
+        DialogResult result = MessageBox.Show("Do you want to save the current working time into log file?",
+                                               "Exit " + this.ProductName,
+                                               MessageBoxButtons.YesNo);
 
+        if (result == DialogResult.No)
+        {
+          WorkTime.enableLogging = false;
+        }
+      }
       Application.Exit();      
     }
 

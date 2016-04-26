@@ -32,9 +32,10 @@ namespace WindowsFormsWorkTimeApplication
     public int WorkingTimeStartHour;
     public int WorkingTimeStopHour;
 
-    public string logFileName;
-    public Boolean logFileAddMonthYear;
-    public char logFileSepChar;
+    public Boolean EnableLogFile;
+    public string LogFileName;
+    public Boolean LogFileAddMonthYear;
+    public char LogFileSepChar;
 
     
     public TimeCalcSettings()
@@ -50,13 +51,14 @@ namespace WindowsFormsWorkTimeApplication
       LunchTimeHour               = 12;
       LunchBreakDurationMinutes   = 30;
 
-      EnableWorkingTimeStartStop     = true;
-      WorkingTimeStartHour = 6;
-      WorkingTimeStopHour = 24;
+      EnableWorkingTimeStartStop  = true;
+      WorkingTimeStartHour        = 6;
+      WorkingTimeStopHour         = 21;
    
-      logFileName                 = @"WTO_Logging.csv";
-      logFileAddMonthYear         = true;
-      logFileSepChar              = ';';
+      EnableLogFile               = false;
+      LogFileName                 = @"WTO_Logging.csv";
+      LogFileAddMonthYear         = true;
+      LogFileSepChar              = '\t';
     }
 
     public static TimeCalcSettings Load(string fileName)
@@ -99,7 +101,7 @@ namespace WindowsFormsWorkTimeApplication
     private Boolean running;
     public TimeCalcSettings settings;
     private string logFileName;
-    public Boolean ignoreLogging;
+    public Boolean enableLogging;
 
     public TimeCalc()
     {
@@ -109,7 +111,7 @@ namespace WindowsFormsWorkTimeApplication
 
     public void log()
     {
-      if (!ignoreLogging)
+      if (enableLogging)
       {
         bool addHeader = false;
 
@@ -138,7 +140,6 @@ namespace WindowsFormsWorkTimeApplication
     {
       string fileName;
 
-      ignoreLogging = false;
    
       fileName = @"WTO_setting.xml";
       settings = TimeCalcSettings.Load(fileName);
@@ -148,22 +149,24 @@ namespace WindowsFormsWorkTimeApplication
         settings = new TimeCalcSettings();
         TimeCalcSettings.Save(fileName, settings);
       }
-
-      if (settings.logFileName.LastIndexOf('.') < 0)
+      
+      enableLogging = settings.EnableLogFile;
+   
+      if (settings.LogFileName.LastIndexOf('.') < 0)
       {
-        settings.logFileName += ".csv";
+        settings.LogFileName += ".csv";
       }
 
 
-      if (settings.logFileAddMonthYear)
+      if (settings.LogFileAddMonthYear)
       {
-        logFileName =  settings.logFileName.Substring(0, settings.logFileName.LastIndexOf('.'));
+        logFileName =  settings.LogFileName.Substring(0, settings.LogFileName.LastIndexOf('.'));
         logFileName += "_" + startTimePara.Year.ToString() + "_" + startTimePara.ToString("MM", System.Globalization.CultureInfo.InvariantCulture);
-        logFileName += settings.logFileName.Substring(settings.logFileName.LastIndexOf('.'));
+        logFileName += settings.LogFileName.Substring(settings.LogFileName.LastIndexOf('.'));
       }
       else
       {
-        logFileName = settings.logFileName;
+        logFileName = settings.LogFileName;
       }
 
       startTime = startTimePara;
@@ -344,10 +347,10 @@ namespace WindowsFormsWorkTimeApplication
       string str;
 
       str =  "Log Timestamp".PadLeft(19);
-      str += settings.logFileSepChar + "Start Date".PadLeft(10);
-      str += settings.logFileSepChar + "Start Time".PadLeft(10);
-      str += settings.logFileSepChar + "Correction Time [minutes]".PadLeft(25);
-      str += settings.logFileSepChar + "Working Time".PadLeft(12);
+      str += settings.LogFileSepChar + "Start Date".PadLeft(10);
+      str += settings.LogFileSepChar + "Start Time".PadLeft(10);
+      str += settings.LogFileSepChar + "Correction Time [minutes]".PadLeft(25);
+      str += settings.LogFileSepChar + "Working Time".PadLeft(12);
       
       return str;
     }
@@ -357,10 +360,10 @@ namespace WindowsFormsWorkTimeApplication
       string str;
       
       str =  DateTime.Now.ToString().PadLeft(19);
-      str += settings.logFileSepChar + startTime.ToShortDateString().PadLeft(10); 
-      str += settings.logFileSepChar + startTime.ToShortTimeString().PadLeft(10);
-      str += settings.logFileSepChar + CorrectionTime.Minutes.ToString().PadLeft(25);
-      str += settings.logFileSepChar + getWorkTime().PadLeft(12);
+      str += settings.LogFileSepChar + startTime.ToShortDateString().PadLeft(10); 
+      str += settings.LogFileSepChar + startTime.ToShortTimeString().PadLeft(10);
+      str += settings.LogFileSepChar + CorrectionTime.Minutes.ToString().PadLeft(25);
+      str += settings.LogFileSepChar + getWorkTime().PadLeft(12);
       
       return str;
     }
